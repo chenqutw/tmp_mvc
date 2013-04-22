@@ -1,0 +1,49 @@
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        compile 'com.google.guava:guava:14.0.1'
+        testCompile 'junit:junit:4.11',
+                'org.mockito:mockito-all:1.9.5'
+    }
+
+}
+
+subprojects {
+
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+
+    version = '1.0'
+
+    jar {
+        manifest.attributes provider: 'gradle'
+    }
+
+    task sourcesJar(type: Jar, dependsOn:classes) {
+        classifier = 'sources'
+        from sourceSets.main.allJava.srcDirs
+        include '**/*.java'
+    }
+    build.dependsOn sourcesJar
+}
+
+project(":core") {
+    dependencies {
+        compile 'javax.servlet:servlet-api:2.5'
+        compile fileTree(dir: 'libs', include: '*.jar')
+    }
+    version = '1.0'
+}
+
+project(":example") {
+    dependencies {
+        compile project(':core')
+        compile 'org.mortbay.jetty:jetty:6.1.26'
+    }
+}
+
